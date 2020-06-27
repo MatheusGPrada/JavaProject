@@ -50,6 +50,25 @@ public class ClienteControl {
 		}
 	}
 
+	public void editar(Cliente cliente) {
+		try {
+			Connection connection = SQLConnection.getConnection();
+			String query = "UPDATE Cliente SET nome = ?, endereco = ?, dt_nascimento = ?, sexo = ?, telefone = ? WHERE cpf = ?";
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setString(1, cliente.getnome());
+            statement.setString(2, cliente.getendereco());
+            statement.setString(3, cliente.getdtnascimento());
+            statement.setString(4, cliente.getsexo());
+            statement.setString(5, cliente.gettelefone());
+            statement.setString(6, cliente.getCPFCliente());
+			statement.executeUpdate();
+
+			connection.close();
+		} catch (SQLException error) {
+			alertError("Erro de database", "Erro ao atualizar registros no banco de dados", error.getMessage());
+		}
+	}
+
 	public Cliente pesquisarPorCPF(String CPF) {
 		try {
 

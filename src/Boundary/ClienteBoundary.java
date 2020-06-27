@@ -8,10 +8,12 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -25,8 +27,9 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
 	private TextField txtEndereco = new TextField();
 	private ChoiceBox<String> checkSexo = new ChoiceBox<String>(FXCollections.observableArrayList("M", "F") );
 	private TextField txtTelefone = new TextField();
+	private Boolean editar = false;
 
-	private Button btnIncluir = new Button("Incluir");
+	private Button btnSalvar = new Button("Salvar");
 	private Button btnLimpar = new Button("Limpar");
 
 	private ClienteControl control = new ClienteControl();
@@ -55,10 +58,10 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
         Campos.add(txtTelefone, 2, 7);
         Campos.add(new Label("                "), 0, 8);
 
-        Campos.add(btnIncluir, 1, 9);
+        Campos.add(btnSalvar, 1, 9);
 		Campos.add(btnLimpar,  3, 9);
 
-		btnIncluir.setOnAction(this);
+		btnSalvar.setOnAction(this);
 		btnLimpar.setOnAction(this);
 
 		panPrincipal.setCenter(Campos);
@@ -69,10 +72,18 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
 	}
 
 	public void handle(ActionEvent event) {
-		if (event.getTarget() == btnIncluir) {
+		if (event.getTarget() == btnSalvar) {
 			Cliente cliente = boundaryToEntity();
-			control.adicionar(cliente);
-			entityToBoundary(new Cliente());
+			if( !this.editar ) {
+				control.adicionar(cliente);
+			} else {
+				control.editar(cliente);
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Edição do cliente");
+				alert.setHeaderText(null);
+				alert.setContentText("Cliente editado com sucesso!");
+				alert.showAndWait();
+			}
 		} else if (event.getTarget() == btnLimpar){
 			txtNome.setText("");
             txtCPF.setText("");
@@ -100,7 +111,7 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
 		return cliente;
 	}
 
-	public void entityToBoundary(Cliente cliente) {
+	public void entityToBoundary(Cliente cliente, Boolean editar) {
 		txtNome.setText( cliente.getnome() );
         txtCPF.setText( cliente.getCPFCliente() );
         txtRG.setText( cliente.getRGCliente() );
@@ -108,6 +119,13 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
         txtEndereco.setText( cliente.getendereco() );
         checkSexo.setValue( cliente.getsexo() );
         txtTelefone.setText( cliente.gettelefone() );
+        setEditar(editar);
+	}
+
+	public void setEditar(Boolean editar){
+		this.editar = editar;
+        txtCPF.setEditable(!this.editar);
+        txtRG.setEditable(!this.editar);
 	}
 
 	public static void main(String[] args) {
