@@ -3,8 +3,11 @@ package Principal;
 import java.util.Optional;
 
 import Boundary.ClienteBoundary;
+import Boundary.ProdutoBoundary;
 import Control.ClienteControl;
+import Control.ProdutoControl;
 import Entity.Cliente;
+import Entity.Produto;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,12 +25,20 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 
 	private static String CPF = "";
 	private static Cliente cliente = new Cliente();
-	private Button btnSalvarCliente = new Button("Incluir");
+	private Button btnIncluirCliente = new Button("Incluir");
 	private Button btnEditarCliente = new Button("Editar");
 	private Button btnExcluirCliente = new Button("Excluir");
 
-	private ClienteBoundary ClienteBoundary = new ClienteBoundary();
-	private ClienteControl control = new ClienteControl();
+	private static String CodProd = "";
+	private static Produto produto = new Produto();
+	private Button btnIncluirProduto = new Button("Incluir");
+	private Button btnEditarProduto = new Button("Editar");
+	private Button btnExcluirProduto = new Button("Excluir");
+
+	private ClienteBoundary clienteBoundary = new ClienteBoundary();
+	private ClienteControl clienteControl = new ClienteControl();
+	private ProdutoBoundary produtoBoundary = new ProdutoBoundary();
+	private ProdutoControl produtoControl = new ProdutoControl();
 	private Stage stage = new Stage();
 
 	@Override
@@ -40,13 +51,23 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 		Campos.add(new Label("                "), 0, 1);
 		Campos.add(new Label("Cliente"), 1, 2);
 		Campos.add(new Label("                "), 2, 2);
-		Campos.add(btnSalvarCliente, 3, 2);
+		Campos.add(btnIncluirCliente, 3, 2);
 		Campos.add(btnEditarCliente,  4, 2);
 		Campos.add(btnExcluirCliente, 5, 2);
+		Campos.add(new Label("                "), 0, 3);
+		Campos.add(new Label("Produto"), 1, 4);
+		Campos.add(new Label("                "), 2, 4);
+		Campos.add(btnIncluirProduto, 3, 4);
+		Campos.add(btnEditarProduto,  4, 4);
+		Campos.add(btnExcluirProduto, 5, 4);
 
-		btnSalvarCliente.setOnAction(this);
+		btnIncluirCliente.setOnAction(this);
 		btnEditarCliente.setOnAction(this);
 		btnExcluirCliente.setOnAction(this);
+
+		btnIncluirProduto.setOnAction(this);
+		btnEditarProduto.setOnAction(this);
+		btnExcluirProduto.setOnAction(this);
 
 		panPrincipal.setCenter(Campos);
 
@@ -56,7 +77,7 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 	}
 
 	public void handle(ActionEvent event) {
-		if (event.getTarget() == btnSalvarCliente) {
+		if (event.getTarget() == btnIncluirCliente) {
 			try {
 				ClienteBoundary ClienteBoundary = new ClienteBoundary();
 				ClienteBoundary.start(stage);
@@ -70,15 +91,15 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 			dialog.setContentText("CPF do Cliente");
 
 			Optional<String> result = dialog.showAndWait();
-			if (CPF.isEmpty()){
+			if (result.isPresent()){
 				CPF = result.get();
-				cliente = control.pesquisarPorCPF(CPF);
-			}
-			try {
-				ClienteBoundary.entityToBoundary(cliente, true);
-				ClienteBoundary.start(stage);
-			} catch (Exception error) {
-				error.printStackTrace();
+				cliente = clienteControl.pesquisarPorCPF(CPF);
+				try {
+					clienteBoundary.entityToBoundary(cliente, true);
+					clienteBoundary.start(stage);
+				} catch (Exception error) {
+					error.printStackTrace();
+				}
 			}
 
 		} else if (event.getTarget() == btnExcluirCliente){
@@ -90,7 +111,7 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 			Optional<String> result = dialog.showAndWait();
 			if (result.isPresent()){
 				CPF = result.get();
-				if (control.excluirPorCPF(CPF)){
+				if (clienteControl.excluirPorCPF(CPF)){
 					Alert alert = new Alert(AlertType.INFORMATION);
 					alert.setTitle("Exclusão de cliente");
 					alert.setHeaderText(null);
@@ -101,6 +122,54 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 					alert.setTitle("Exclusão de cliente");
 					alert.setHeaderText(null);
 					alert.setContentText("CPF inválido!");
+					alert.showAndWait();
+				}
+			}
+		} else if (event.getTarget() == btnIncluirProduto) {
+			try {
+				ProdutoBoundary produtoBoundary = new ProdutoBoundary();
+				produtoBoundary.start(stage);
+			} catch (Exception error) {
+				error.printStackTrace();
+			}
+		} else if (event.getTarget() == btnEditarProduto) {
+			TextInputDialog dialog = new TextInputDialog("Código Produto");
+			dialog.setTitle("Editar Produto");
+			dialog.setHeaderText("Insira o código do produto que será editado");
+			dialog.setContentText("Código do Produto");
+
+			Optional<String> result = dialog.showAndWait();
+			if (result.isPresent()){
+				CodProd = result.get();
+				produto = produtoControl.pesquisarPorCod(Integer.parseInt(CodProd));
+				try {
+					produtoBoundary.entityToBoundary(produto, true);
+					produtoBoundary.start(stage);
+				} catch (Exception error) {
+					error.printStackTrace();
+				}
+			}
+
+		} else if (event.getTarget() == btnExcluirProduto){
+			TextInputDialog dialog = new TextInputDialog("Código Produto");
+			dialog.setTitle("Excluir Produto");
+			dialog.setHeaderText("Insira o código do produto que será excluído");
+			dialog.setContentText("Código do Produto");
+
+			Optional<String> result = dialog.showAndWait();
+			if (result.isPresent()){
+				CodProd = result.get();
+				if (produtoControl.excluirPorCod(Integer.parseInt(CodProd))){
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Exclusão de produto");
+					alert.setHeaderText(null);
+					alert.setContentText("Produto excluído com sucesso!");
+					alert.showAndWait();
+				} else {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Exclusão de produto");
+					alert.setHeaderText(null);
+					alert.setContentText("Código de produto inválido!");
 					alert.showAndWait();
 				}
 			}

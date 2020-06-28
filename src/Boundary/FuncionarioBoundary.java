@@ -1,7 +1,6 @@
 package Boundary;
-
-import Entity.Cliente;
-import Control.ClienteControl;
+import Entity.Funcionario;
+import Control.FuncionarioControl;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -18,21 +17,20 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class ClienteBoundary extends Application implements EventHandler<ActionEvent>{
-
-    private TextField txtNome = new TextField();
+public class FuncionarioBoundary extends Application implements EventHandler<ActionEvent> {
+	private TextField txtCod = new TextField();
+	private TextField txtNome = new TextField();
     private TextField txtCPF = new TextField();
     private TextField txtRG = new TextField();
-    private TextField txtDtNascimento = new TextField();
+    private TextField txtDtRegistro = new TextField();
 	private TextField txtEndereco = new TextField();
 	private ChoiceBox<String> checkSexo = new ChoiceBox<String>(FXCollections.observableArrayList("M", "F") );
-	private TextField txtTelefone = new TextField();
 	private Boolean editar = false;
 
 	private Button btnSalvar = new Button("Salvar");
 	private Button btnLimpar = new Button("Limpar");
 
-	private ClienteControl control = new ClienteControl();
+	private FuncionarioControl control = new FuncionarioControl();
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -42,20 +40,26 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
 		GridPane Campos = new GridPane();
 
 		Campos.add(new Label("                "), 0, 1);
-		Campos.add(new Label("Nome: "), 1, 1);
-		Campos.add(txtNome, 2, 1);
-		Campos.add(new Label("CPF: "), 1, 2);
-		Campos.add(txtCPF, 2, 2);
-		Campos.add(new Label("RG: "), 1, 3);
-		Campos.add(txtRG, 2, 3);
-		Campos.add(new Label("Data nascimento: "), 1, 4);
-		Campos.add(txtDtNascimento, 2, 4);
-		Campos.add(new Label("Endereço: "), 1, 5);
-		Campos.add(txtEndereco, 2, 5);
-		Campos.add(new Label("Sexo"), 1, 6);
-        Campos.add(checkSexo, 2, 6);
-        Campos.add(new Label("Telefone: "), 1, 7);
-        Campos.add(txtTelefone, 2, 7);
+		Campos.add(new Label("Código: "), 1, 1);
+		Campos.add(txtCod, 2, 1);
+		
+		Campos.add(new Label("Nome: "), 1, 2);
+		Campos.add(txtNome, 2, 2);
+		
+		Campos.add(new Label("CPF: "), 1, 3);
+		Campos.add(txtCPF, 2, 3);
+		
+		Campos.add(new Label("RG: "), 1, 4);
+		Campos.add(txtRG, 2, 4);
+		
+		Campos.add(new Label("Data Registro: "), 1, 5);
+		Campos.add(txtDtRegistro, 2, 5);
+		
+		Campos.add(new Label("Endereço: "), 1, 6);
+		Campos.add(txtEndereco, 2, 6);
+		
+		Campos.add(new Label("Sexo"), 1, 7);
+        Campos.add(checkSexo, 2, 7);
         Campos.add(new Label("                "), 0, 8);
 
         Campos.add(btnSalvar, 1, 9);
@@ -67,17 +71,17 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
 		panPrincipal.setCenter(Campos);
 
 		stage.setScene(scene);
-		stage.setTitle("Cadastro de Cliente");
+		stage.setTitle("Cadastro de Funcionario");
 		stage.show();
 	}
 
 	public void handle(ActionEvent event) {
 		if (event.getTarget() == btnSalvar) {
-			Cliente cliente = boundaryToEntity();
+			Funcionario funcionario = boundaryToEntity();
 			if( !this.editar ) {
-				control.adicionar(cliente);
+				control.adicionar(funcionario);
 			} else {
-				control.editar(cliente);
+				control.editar(funcionario);
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Edição do cliente");
 				alert.setHeaderText(null);
@@ -85,45 +89,49 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
 				alert.showAndWait();
 			}
 		} else if (event.getTarget() == btnLimpar){
+			txtCod.setText("");
 			txtNome.setText("");
             txtCPF.setText("");
             txtRG.setText("");
-            txtDtNascimento.setText("");
+            txtDtRegistro.setText("");
             txtEndereco.setText("");
             checkSexo.setValue(null);
-            txtTelefone.setText("");
 		}
 	}
 
-	public Cliente boundaryToEntity() {
-		Cliente cliente = new Cliente();
+	public Funcionario boundaryToEntity() {
+		Funcionario funcionario = new Funcionario();
 		try {
-            cliente.setNome( txtNome.getText() );
-            cliente.setCPFCliente( txtCPF.getText() );
-            cliente.setRGCliente( txtRG.getText() );
-            cliente.setdtnascimento( txtDtNascimento.getText() );
-			cliente.setendereco( txtEndereco.getText() );
-			cliente.setsexo( (String) checkSexo.getValue() );
-            cliente.settelefone( txtTelefone.getText() );
+			funcionario.setCodFunc(Integer.parseInt(txtCod.getText()));
+			funcionario.setNome( txtNome.getText() );
+			funcionario.setCPFFunc( txtCPF.getText() );
+			funcionario.setRGFunc( txtRG.getText() );
+			funcionario.setdtregistro( txtDtRegistro.getText() );
+			funcionario.setendereco( txtEndereco.getText() );
+			funcionario.setsexo( (String) checkSexo.getValue() );
 		} catch (Exception ex) {
 			System.out.println("Erro inserir o registro na tabela!");
 		}
-		return cliente;
+		return funcionario;
 	}
 
-	public void entityToBoundary(Cliente cliente, Boolean editar) {
-		txtNome.setText( cliente.getnome() );
-        txtCPF.setText( cliente.getCPFCliente() );
-        txtRG.setText( cliente.getRGCliente() );
-		txtDtNascimento.setText( cliente.getdtnascimento() );
-        txtEndereco.setText( cliente.getendereco() );
-        checkSexo.setValue( cliente.getsexo() );
-        txtTelefone.setText( cliente.gettelefone() );
+	public void entityToBoundary(Funcionario funcionario, Boolean editar) {
+		txtNome.setText(funcionario.getnome());
+        txtCPF.setText(funcionario.getCPFFunc());
+        txtRG.setText(funcionario.getRGFunc());
+		txtDtRegistro.setText(funcionario.getdtregistro());
+        txtEndereco.setText(funcionario.getendereco());
+        checkSexo.setValue(funcionario.getsexo());
         setEditar(editar);
 	}
 
 	public void setEditar(Boolean editar){
 		this.editar = editar;
+        txtCPF.setEditable(!this.editar);
+        txtRG.setEditable(!this.editar);
 	}
 
+	public static void main(String[] args) {
+		Application.launch(FuncionarioBoundary.class, args);
+	}
 }
