@@ -1,17 +1,13 @@
 package Entity;
 
 public class Funcionario {
-	private int CodFunc = 0;
 	private String nome = "";
 	private String CPFFunc = "";
 	private String RGFunc = "";
 	private String dtregistro = "";
 	private String endereco = "";
 	private String sexo = null;
-	
-	public void setCodFunc(int CodFunc) {
-		this.CodFunc = CodFunc;
-	}		
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
@@ -30,10 +26,7 @@ public class Funcionario {
 	public void setsexo(String sexo) {
 		this.sexo = sexo;
 	}
-	
-	public int getCodFunc() {
-		return CodFunc;
-	}
+
 	public String getnome() {
 		return nome;
 	}

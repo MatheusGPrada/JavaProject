@@ -50,7 +50,7 @@ public class ClienteControl {
 		}
 	}
 
-	public void editar(Cliente cliente,  String CodProd) {
+	public void editar(Cliente cliente,  String CPF) {
 		try {
 			Connection connection = SQLConnection.getConnection();
 
@@ -63,7 +63,7 @@ public class ClienteControl {
             statement.setString(5, cliente.getdtnascimento());
             statement.setString(6, cliente.getsexo());
             statement.setString(7, cliente.gettelefone());
-            statement.setString(8, CodProd);
+            statement.setString(8, CPF);
 			statement.executeUpdate();
 
 			connection.close();

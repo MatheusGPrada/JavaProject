@@ -33,15 +33,14 @@ public class FuncionarioControl{
 	public void adicionar(Funcionario funcionario) {
 		try {
 			Connection connection = SQLConnection.getConnection();
-			String query = "INSERT INTO Funcionario (nome, cpf, rg, endereco, dt_nascimento, sexo, telefone) VALUES  (?, ?, ?, ?, ?, ?, ?)";
+			String query = "INSERT INTO Funcionario ( nome, cpf, rg, endereco, dt_registro, sexo) VALUES  ( ?, ?, ?, ?, ?, ?)";
 			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setInt(1, funcionario.getCodFunc());
-			statement.setString(2, funcionario.getnome());
-			statement.setString(3, funcionario.getCPFFunc());
-            statement.setString(4, funcionario.getRGFunc());
-            statement.setString(5, funcionario.getendereco());
-            statement.setString(6, funcionario.getdtregistro());
-            statement.setString(7, funcionario.getsexo());
+			statement.setString(1, funcionario.getnome());
+			statement.setString(2, funcionario.getCPFFunc());
+            statement.setString(3, funcionario.getRGFunc());
+            statement.setString(4, funcionario.getendereco());
+            statement.setString(5, funcionario.getdtregistro());
+            statement.setString(6, funcionario.getsexo());
 			statement.executeUpdate();
 
 			connection.close();
@@ -50,18 +49,18 @@ public class FuncionarioControl{
 		}
 	}
 
-	public void editar(Funcionario funcionario) {
+	public void editar(Funcionario funcionario, String CPF) {
 		try {
 			Connection connection = SQLConnection.getConnection();
-			String query = "UPDATE Funcionario SET nome = ?, endereco = ?, dt_nascimento = ?, sexo = ?, telefone = ? WHERE cpf = ?";
+			String query = "UPDATE Funcionario SET nome = ?, cpf = ?, rg = ?, endereco = ?, dt_registro = ?, sexo = ? WHERE cpf = ?";
 			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setInt(1, funcionario.getCodFunc());
-			statement.setString(2, funcionario.getnome());
-			statement.setString(3, funcionario.getCPFFunc());
-            statement.setString(4, funcionario.getRGFunc());
-            statement.setString(5, funcionario.getendereco());
-            statement.setString(6, funcionario.getdtregistro());
-            statement.setString(7, funcionario.getsexo());
+			statement.setString(1, funcionario.getnome());
+			statement.setString(2, funcionario.getCPFFunc());
+            statement.setString(3, funcionario.getRGFunc());
+            statement.setString(4, funcionario.getendereco());
+            statement.setString(5, funcionario.getdtregistro());
+            statement.setString(6, funcionario.getsexo());
+            statement.setString(7, CPF);
 			statement.executeUpdate();
 
 			connection.close();
@@ -70,7 +69,7 @@ public class FuncionarioControl{
 		}
 	}
 
-	public Funcionario pesquisarPorCod(int CodFunc) {
+	public Funcionario pesquisarPorCPF(String CPF) {
 		try {
 
 			Connection connection = SQLConnection.getConnection();
@@ -78,18 +77,17 @@ public class FuncionarioControl{
             String query = "select * from funcionario where cpf = ?";
 
 			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setInt(1, CodFunc );
+			statement.setString(1, CPF );
 			ResultSet result = statement.executeQuery();
 			if (result.first()) {
 				Funcionario funcionario = new Funcionario();
-				funcionario.setCodFunc(result.getInt("codFuncionario"));
 				funcionario.setNome(result.getString("nome"));
 				funcionario.setCPFFunc(result.getString("cpf"));
 				funcionario.setRGFunc(result.getString("rg"));
 				funcionario.setendereco(result.getString("endereco"));
 				funcionario.setdtregistro(result.getString("dt_registro"));
 				funcionario.setsexo(result.getString("sexo"));
-				
+
 				return funcionario;
 			}
 			connection.close();
@@ -100,18 +98,18 @@ public class FuncionarioControl{
 		return null;
 	}
 
-	public boolean excluirPorCod(int CodFunc) {
+	public boolean excluirPorCPF(String CPF) {
 		try {
 
 			Connection connection = SQLConnection.getConnection();
-			String query = "select * from funcionario where codFuncionario = ?";
+			String query = "select * from funcionario where cpf = ?";
 			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setInt(1, CodFunc);
+			statement.setString(1, CPF);
 			ResultSet result = statement.executeQuery();
 			if (result.first()) {
-				query = "delete from funcionario where codFuncionario = ?";
+				query = "delete from funcionario where cpf = ?";
 				statement = connection.prepareStatement(query);
-				statement.setInt(1, CodFunc);
+				statement.setString(1, CPF);
 				statement.executeQuery();
 				return true;
 			}
@@ -123,5 +121,5 @@ public class FuncionarioControl{
 		}
 		return false;
 	}
-	
+
 }

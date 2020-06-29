@@ -3,10 +3,13 @@ package Principal;
 import java.util.Optional;
 
 import Boundary.ClienteBoundary;
+import Boundary.FuncionarioBoundary;
 import Boundary.ProdutoBoundary;
 import Control.ClienteControl;
+import Control.FuncionarioControl;
 import Control.ProdutoControl;
 import Entity.Cliente;
+import Entity.Funcionario;
 import Entity.Produto;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -23,7 +26,7 @@ import javafx.stage.Stage;
 
 public class Principal extends Application implements EventHandler<ActionEvent>{
 
-	private static String CPF = "";
+	private static String CPFCliente = "";
 	private static Cliente cliente = new Cliente();
 	private Button btnIncluirCliente = new Button("Incluir");
 	private Button btnEditarCliente = new Button("Editar");
@@ -37,16 +40,26 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 	private Button btnVisualizarProduto = new Button("Visualizar");
 	private Button btnExcluirProduto = new Button("Excluir");
 
+	private static String CPFFuncionario = "";
+	private static Funcionario funcionario = new Funcionario();
+	private Button btnIncluirFuncionario = new Button("Incluir");
+	private Button btnEditarFuncionario = new Button("Editar");
+	private Button btnVisualizarFuncionario = new Button("Visualizar");
+	private Button btnExcluirFuncionario = new Button("Excluir");
+
+
 	private ClienteBoundary clienteBoundary = new ClienteBoundary();
 	private ClienteControl clienteControl = new ClienteControl();
+	private FuncionarioBoundary funcionarioBoundary = new FuncionarioBoundary();
+	private FuncionarioControl funcionarioControl = new FuncionarioControl();
 	private ProdutoBoundary produtoBoundary = new ProdutoBoundary();
 	private ProdutoControl produtoControl = new ProdutoControl();
 	private Stage stage = new Stage();
 
-	@Override
+
 	public void start(Stage stage) throws Exception {
 		BorderPane panPrincipal = new BorderPane();
-		Scene scene = new Scene(panPrincipal, 400, 250);
+		Scene scene = new Scene(panPrincipal, 450, 250);
 
 		GridPane Campos = new GridPane();
 
@@ -64,11 +77,23 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 		Campos.add(btnEditarProduto,  4, 4);
 		Campos.add(btnVisualizarProduto,  5, 4);
 		Campos.add(btnExcluirProduto, 6, 4);
+		Campos.add(new Label("                "), 0, 5);
+		Campos.add(new Label("Funcionario"), 1, 6);
+		Campos.add(new Label("                "), 2, 6);
+		Campos.add(btnIncluirFuncionario, 3, 6);
+		Campos.add(btnEditarFuncionario,  4, 6);
+		Campos.add(btnVisualizarFuncionario,  5, 6);
+		Campos.add(btnExcluirFuncionario, 6, 6);
 
 		btnIncluirCliente.setOnAction(this);
 		btnEditarCliente.setOnAction(this);
 		btnVisualizarCliente.setOnAction(this);
 		btnExcluirCliente.setOnAction(this);
+
+		btnIncluirFuncionario.setOnAction(this);
+		btnEditarFuncionario.setOnAction(this);
+		btnVisualizarFuncionario.setOnAction(this);
+		btnExcluirFuncionario.setOnAction(this);
 
 		btnIncluirProduto.setOnAction(this);
 		btnEditarProduto.setOnAction(this);
@@ -78,7 +103,7 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 		panPrincipal.setCenter(Campos);
 
 		stage.setScene(scene);
-		stage.setTitle("Cadastro de Cliente");
+		stage.setTitle("Tela Principal");
 		stage.show();
 	}
 
@@ -98,11 +123,11 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 
 			Optional<String> result = dialog.showAndWait();
 			if (result.isPresent()){
-				CPF = result.get();
-				cliente = clienteControl.pesquisarPorCPF(CPF);
+				CPFCliente = result.get();
+				cliente = clienteControl.pesquisarPorCPF(CPFCliente);
 				if (cliente != null){
 					try {
-						clienteBoundary.entityToBoundary(cliente, "editar", CPF);
+						clienteBoundary.entityToBoundary(cliente, "editar", CPFCliente);
 						clienteBoundary.start(stage);
 					} catch (Exception error) {
 						error.printStackTrace();
@@ -124,11 +149,11 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 
 			Optional<String> result = dialog.showAndWait();
 			if (result.isPresent()){
-				CPF = result.get();
-				cliente = clienteControl.pesquisarPorCPF(CPF);
+				CPFCliente = result.get();
+				cliente = clienteControl.pesquisarPorCPF(CPFCliente);
 				if (cliente != null){
 					try {
-						clienteBoundary.entityToBoundary(cliente, "visualizar", CPF);
+						clienteBoundary.entityToBoundary(cliente, "visualizar", CPFCliente);
 						clienteBoundary.start(stage);
 					} catch (Exception error) {
 						error.printStackTrace();
@@ -149,8 +174,8 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 
 			Optional<String> result = dialog.showAndWait();
 			if (result.isPresent()){
-				CPF = result.get();
-				if (clienteControl.excluirPorCPF(CPF)){
+				CPFCliente = result.get();
+				if (clienteControl.excluirPorCPF(CPFCliente)){
 					Alert alert = new Alert(AlertType.INFORMATION);
 					alert.setTitle("Exclusão de cliente");
 					alert.setHeaderText(null);
@@ -164,7 +189,90 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 					alert.showAndWait();
 				}
 			}
-		} else if (event.getTarget() == btnIncluirProduto) {
+		}else if (event.getTarget() == btnIncluirFuncionario) {
+			try {
+				FuncionarioBoundary FuncionarioBoundary = new FuncionarioBoundary();
+				FuncionarioBoundary.start(stage);
+			} catch (Exception error) {
+				error.printStackTrace();
+			}
+		} else if (event.getTarget() == btnEditarFuncionario){
+			TextInputDialog dialog = new TextInputDialog("CPF funcionário");
+			dialog.setTitle("Editar funcionário");
+			dialog.setHeaderText("Insira o CPF que será editado");
+			dialog.setContentText("CPF do funcionário");
+
+			Optional<String> result = dialog.showAndWait();
+			if (result.isPresent()){
+				CPFFuncionario = result.get();
+				funcionario = funcionarioControl.pesquisarPorCPF(CPFFuncionario);
+				if (funcionario != null){
+					try {
+						funcionarioBoundary.entityToBoundary(funcionario, "editar", CPFFuncionario);
+						funcionarioBoundary.start(stage);
+					} catch (Exception error) {
+						error.printStackTrace();
+					}
+				} else {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Edição de funcionário");
+					alert.setHeaderText(null);
+					alert.setContentText("CPF inválido!");
+					alert.showAndWait();
+				}
+			}
+
+		} else if (event.getTarget() == btnVisualizarFuncionario) {
+			TextInputDialog dialog = new TextInputDialog("Código Funcionario");
+			dialog.setTitle("Visualizar Funcionario");
+			dialog.setHeaderText("Insira o código do funcionario que deseja visualizar");
+			dialog.setContentText("Código do Cliente");
+
+			Optional<String> result = dialog.showAndWait();
+			if (result.isPresent()){
+				CPFFuncionario = result.get();
+				funcionario = funcionarioControl.pesquisarPorCPF(CPFFuncionario);
+				if (funcionario != null){
+					try {
+						funcionarioBoundary.entityToBoundary(funcionario, "visualizar", CPFFuncionario);
+						funcionarioBoundary.start(stage);
+					} catch (Exception error) {
+						error.printStackTrace();
+					}
+				} else {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Visualização de funcionario");
+					alert.setHeaderText(null);
+					alert.setContentText("Código inválido!");
+					alert.showAndWait();
+				}
+			}
+		}else if (event.getTarget() == btnExcluirFuncionario){
+			TextInputDialog dialog = new TextInputDialog("Código Funcionario");
+			dialog.setTitle("Excluir Funcionario");
+			dialog.setHeaderText("Insira o o funcionario que será excluído");
+			dialog.setContentText("Código do Funcionario");
+
+			Optional<String> result = dialog.showAndWait();
+			if (result.isPresent()){
+				CPFFuncionario = result.get();
+				if (funcionarioControl.excluirPorCPF(CPFFuncionario)){
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Exclusão de funcionario");
+					alert.setHeaderText(null);
+					alert.setContentText("Funcionario excluído com sucesso!");
+					alert.showAndWait();
+				} else {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Exclusão de funcionario");
+					alert.setHeaderText(null);
+					alert.setContentText("Código de funcionario inválido!");
+					alert.showAndWait();
+				}
+			}
+		}
+
+		else if (event.getTarget() == btnIncluirProduto) {
 			try {
 				ProdutoBoundary produtoBoundary = new ProdutoBoundary();
 				produtoBoundary.start(stage);
@@ -239,6 +347,7 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 			}
 		}
 	}
+
 
 
 	public static void main(String[] args) {
