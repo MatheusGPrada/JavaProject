@@ -1,22 +1,18 @@
 package Control;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import Connection.SQLConnection;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import Entity.Cliente;
+
+import Connection.SQLConnection;
+
 import Entity.Produto;
 
 public class ProdutoControl {
-	
-	
-		private static final String URL = "jdbc:mariadb://localhost/Clienteshop?allowMultiQueries=true";
-		private static final String USER = "root";
-		private static final String PASS = "";
 
 		public ProdutoControl() {
 			try {
@@ -36,14 +32,14 @@ public class ProdutoControl {
 
 		public void adicionar(Produto produto) {
 			try {
-				Connection connection = DriverManager.getConnection(URL, USER, PASS);
-				String query = "INSERT INTO Produto (nome, valor, quantidade, codigo_produto) VALUES  (?, ?, ?, ?)";
+				Connection connection = SQLConnection.getConnection();
+				String query = "INSERT INTO produto (nome, valor, qtd, codprod) VALUES  (?, ?, ?, ?)";
 				PreparedStatement statement = connection.prepareStatement(query);
 				statement.setString(1, produto.getNome());
 				statement.setString(2, produto.getValor());
 	            statement.setInt(3, produto.getQtd());
 	            statement.setInt(4, produto.getCodProd());
-	            
+
 				statement.executeUpdate();
 
 				connection.close();
@@ -51,16 +47,17 @@ public class ProdutoControl {
 				alertError("Erro de database", "Erro ao realizar conexão com o banco de dados", error.getMessage());
 			}
 		}
-		
-		public void editar(Produto produto) {
+
+		public void editar(Produto produto, String CodProd) {
 			try {
 				Connection connection = SQLConnection.getConnection();
-				String query = "UPDATE Produto SET nome = ?, valor = ?, quantidade = ?, cod_produto = ?";
+				String query = "UPDATE produto SET nome = ?, valor = ?, qtd = ?, codprod = ? WHERE codprod = ?";
 				PreparedStatement statement = connection.prepareStatement(query);
 				statement.setString(1, produto.getNome());
 	            statement.setString(2, produto.getValor());
 	            statement.setLong(3, produto.getQtd());
 	            statement.setLong(4, produto.getCodProd());
+	            statement.setLong(5, Integer.parseInt(CodProd));
 	            statement.executeUpdate();
 
 				connection.close();
@@ -72,9 +69,9 @@ public class ProdutoControl {
 		public Produto pesquisarPorCod(int CodProd) {
 			try {
 
-	            Connection connection = DriverManager.getConnection(URL, USER, PASS);
+				Connection connection = SQLConnection.getConnection();
 
-	            String query = "SELECT * FROM Produto WHERE cod_cliente = ?";
+	            String query = "SELECT * FROM Produto WHERE codprod = ?";
 
 				PreparedStatement statement = connection.prepareStatement(query);
 				statement.setInt(1, CodProd );
@@ -83,9 +80,9 @@ public class ProdutoControl {
 					Produto produto = new Produto();
 					produto.setNome(result.getString("nome"));
 					produto.setValor(result.getString("valor"));
-					produto.setQtd(result.getInt("quantidade"));
-					produto.setCodProd(result.getInt("codigo_produto"));
-					
+					produto.setQtd(result.getInt("qtd"));
+					produto.setCodProd(result.getInt("codprod"));
+
 					return produto;
 				}
 				connection.close();
@@ -95,17 +92,17 @@ public class ProdutoControl {
 			}
 			return null;
 		}
-		
+
 		public boolean excluirPorCod(int CodProd) {
 			try {
 
 				Connection connection = SQLConnection.getConnection();
-				String query = "select * from produto where cod_produto = ?";
+				String query = "select * from produto where codprod = ?";
 				PreparedStatement statement = connection.prepareStatement(query);
 				statement.setInt(1, CodProd);
 				ResultSet result = statement.executeQuery();
 				if (result.first()) {
-					query = "delete from produto where cod_produto = ?";
+					query = "delete from produto where codprod = ?";
 					statement = connection.prepareStatement(query);
 					statement.setInt(1, CodProd);
 					statement.executeQuery();

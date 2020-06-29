@@ -50,17 +50,20 @@ public class ClienteControl {
 		}
 	}
 
-	public void editar(Cliente cliente) {
+	public void editar(Cliente cliente,  String CodProd) {
 		try {
 			Connection connection = SQLConnection.getConnection();
-			String query = "UPDATE Cliente SET nome = ?, endereco = ?, dt_nascimento = ?, sexo = ?, telefone = ? WHERE cpf = ?";
+
+			String query = "UPDATE Cliente SET nome = ?, cpf = ?, rg = ?, endereco = ?, dt_nascimento = ?, sexo = ?, telefone = ? WHERE cpf = ?";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, cliente.getnome());
-            statement.setString(2, cliente.getendereco());
-            statement.setString(3, cliente.getdtnascimento());
-            statement.setString(4, cliente.getsexo());
-            statement.setString(5, cliente.gettelefone());
-            statement.setString(6, cliente.getCPFCliente());
+			statement.setString(2, cliente.getCPFCliente());
+			statement.setString(3, cliente.getRGCliente());
+            statement.setString(4, cliente.getendereco());
+            statement.setString(5, cliente.getdtnascimento());
+            statement.setString(6, cliente.getsexo());
+            statement.setString(7, cliente.gettelefone());
+            statement.setString(8, CodProd);
 			statement.executeUpdate();
 
 			connection.close();

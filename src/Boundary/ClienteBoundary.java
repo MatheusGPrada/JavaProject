@@ -27,7 +27,8 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
 	private TextField txtEndereco = new TextField();
 	private ChoiceBox<String> checkSexo = new ChoiceBox<String>(FXCollections.observableArrayList("M", "F") );
 	private TextField txtTelefone = new TextField();
-	private Boolean editar = false;
+	private String opcao = "incluir";
+	private String CPF = "";
 
 	private Button btnSalvar = new Button("Salvar");
 	private Button btnLimpar = new Button("Limpar");
@@ -58,11 +59,29 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
         Campos.add(txtTelefone, 2, 7);
         Campos.add(new Label("                "), 0, 8);
 
-        Campos.add(btnSalvar, 1, 9);
-		Campos.add(btnLimpar,  3, 9);
+        if (this.opcao != "visualizar") {
+        	Campos.add(btnSalvar, 1, 9);
+        	Campos.add(btnLimpar,  3, 9);
 
-		btnSalvar.setOnAction(this);
-		btnLimpar.setOnAction(this);
+        	btnSalvar.setOnAction(this);
+        	btnLimpar.setOnAction(this);
+
+        	txtNome.setDisable(false);
+        	txtCPF.setDisable(false);
+        	txtRG.setDisable(false);
+        	txtDtNascimento.setDisable(false);
+        	txtEndereco.setDisable(false);
+        	checkSexo.setDisable(false);
+        	txtTelefone.setDisable(false);
+        } else {
+        	txtNome.setDisable(true);
+        	txtCPF.setDisable(true);
+        	txtRG.setDisable(true);
+        	txtDtNascimento.setDisable(true);
+        	txtEndereco.setDisable(true);
+        	checkSexo.setDisable(true);
+        	txtTelefone.setDisable(true);
+        }
 
 		panPrincipal.setCenter(Campos);
 
@@ -74,10 +93,23 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
 	public void handle(ActionEvent event) {
 		if (event.getTarget() == btnSalvar) {
 			Cliente cliente = boundaryToEntity();
-			if( !this.editar ) {
-				control.adicionar(cliente);
+			if( this.opcao == "incluir") {
+				if (control.pesquisarPorCPF(cliente.getCPFCliente()) == null ) {
+					control.adicionar(cliente);
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Inclusão do cliente");
+					alert.setHeaderText(null);
+					alert.setContentText("Cliente incluído com sucesso!");
+					alert.showAndWait();
+				} else {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Inclusão do cliente");
+					alert.setHeaderText(null);
+					alert.setContentText("Já existe um cliente na base de dados com o CPF informado!");
+					alert.showAndWait();
+				}
 			} else {
-				control.editar(cliente);
+				control.editar(cliente, this.CPF);
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Edição do cliente");
 				alert.setHeaderText(null);
@@ -111,7 +143,7 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
 		return cliente;
 	}
 
-	public void entityToBoundary(Cliente cliente, Boolean editar) {
+	public void entityToBoundary(Cliente cliente, String opcao, String CPF) {
 		txtNome.setText( cliente.getnome() );
         txtCPF.setText( cliente.getCPFCliente() );
         txtRG.setText( cliente.getRGCliente() );
@@ -119,11 +151,16 @@ public class ClienteBoundary extends Application implements EventHandler<ActionE
         txtEndereco.setText( cliente.getendereco() );
         checkSexo.setValue( cliente.getsexo() );
         txtTelefone.setText( cliente.gettelefone() );
-        setEditar(editar);
+        setOpcao(opcao);
+        setCPF(CPF);
 	}
 
-	public void setEditar(Boolean editar){
-		this.editar = editar;
+	public void setOpcao(String opcao){
+		this.opcao = opcao;
+	}
+
+	public void setCPF(String CPF){
+		this.CPF = CPF;
 	}
 
 }

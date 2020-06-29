@@ -27,12 +27,14 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 	private static Cliente cliente = new Cliente();
 	private Button btnIncluirCliente = new Button("Incluir");
 	private Button btnEditarCliente = new Button("Editar");
+	private Button btnVisualizarCliente = new Button("Visualizar");
 	private Button btnExcluirCliente = new Button("Excluir");
 
 	private static String CodProd = "";
 	private static Produto produto = new Produto();
 	private Button btnIncluirProduto = new Button("Incluir");
 	private Button btnEditarProduto = new Button("Editar");
+	private Button btnVisualizarProduto = new Button("Visualizar");
 	private Button btnExcluirProduto = new Button("Excluir");
 
 	private ClienteBoundary clienteBoundary = new ClienteBoundary();
@@ -53,20 +55,24 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 		Campos.add(new Label("                "), 2, 2);
 		Campos.add(btnIncluirCliente, 3, 2);
 		Campos.add(btnEditarCliente,  4, 2);
-		Campos.add(btnExcluirCliente, 5, 2);
+		Campos.add(btnVisualizarCliente,  5, 2);
+		Campos.add(btnExcluirCliente, 6, 2);
 		Campos.add(new Label("                "), 0, 3);
 		Campos.add(new Label("Produto"), 1, 4);
 		Campos.add(new Label("                "), 2, 4);
 		Campos.add(btnIncluirProduto, 3, 4);
 		Campos.add(btnEditarProduto,  4, 4);
-		Campos.add(btnExcluirProduto, 5, 4);
+		Campos.add(btnVisualizarProduto,  5, 4);
+		Campos.add(btnExcluirProduto, 6, 4);
 
 		btnIncluirCliente.setOnAction(this);
 		btnEditarCliente.setOnAction(this);
+		btnVisualizarCliente.setOnAction(this);
 		btnExcluirCliente.setOnAction(this);
 
 		btnIncluirProduto.setOnAction(this);
 		btnEditarProduto.setOnAction(this);
+		btnVisualizarProduto.setOnAction(this);
 		btnExcluirProduto.setOnAction(this);
 
 		panPrincipal.setCenter(Campos);
@@ -94,15 +100,48 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 			if (result.isPresent()){
 				CPF = result.get();
 				cliente = clienteControl.pesquisarPorCPF(CPF);
-				try {
-					clienteBoundary.entityToBoundary(cliente, true);
-					clienteBoundary.start(stage);
-				} catch (Exception error) {
-					error.printStackTrace();
+				if (cliente != null){
+					try {
+						clienteBoundary.entityToBoundary(cliente, "editar", CPF);
+						clienteBoundary.start(stage);
+					} catch (Exception error) {
+						error.printStackTrace();
+					}
+				} else {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Edição de cliente");
+					alert.setHeaderText(null);
+					alert.setContentText("CPF inválido!");
+					alert.showAndWait();
 				}
 			}
 
-		} else if (event.getTarget() == btnExcluirCliente){
+		} else if (event.getTarget() == btnVisualizarCliente) {
+			TextInputDialog dialog = new TextInputDialog("CPF");
+			dialog.setTitle("Visualizar Cliente");
+			dialog.setHeaderText("Insira o CPF que deseja visualizar");
+			dialog.setContentText("CPF do Cliente");
+
+			Optional<String> result = dialog.showAndWait();
+			if (result.isPresent()){
+				CPF = result.get();
+				cliente = clienteControl.pesquisarPorCPF(CPF);
+				if (cliente != null){
+					try {
+						clienteBoundary.entityToBoundary(cliente, "visualizar", CPF);
+						clienteBoundary.start(stage);
+					} catch (Exception error) {
+						error.printStackTrace();
+					}
+				} else {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Visualização de cliente");
+					alert.setHeaderText(null);
+					alert.setContentText("CPF inválido!");
+					alert.showAndWait();
+				}
+			}
+		}else if (event.getTarget() == btnExcluirCliente){
 			TextInputDialog dialog = new TextInputDialog("CPF");
 			dialog.setTitle("Excluir Cliente");
 			dialog.setHeaderText("Insira o CPF que será excluído");
@@ -143,10 +182,35 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 				CodProd = result.get();
 				produto = produtoControl.pesquisarPorCod(Integer.parseInt(CodProd));
 				try {
-					produtoBoundary.entityToBoundary(produto, true);
+					produtoBoundary.entityToBoundary(produto, "editar", CodProd);
 					produtoBoundary.start(stage);
 				} catch (Exception error) {
 					error.printStackTrace();
+				}
+			}
+		} else if (event.getTarget() == btnVisualizarProduto) {
+			TextInputDialog dialog = new TextInputDialog("Código Produto");
+			dialog.setTitle("Visualizar Produto");
+			dialog.setHeaderText("Insira o código do produto que deseja visualizar");
+			dialog.setContentText("Código Produto");
+
+			Optional<String> result = dialog.showAndWait();
+			if (result.isPresent()){
+				CodProd = result.get();
+				produto = produtoControl.pesquisarPorCod(Integer.parseInt(CodProd));
+				if (produto != null){
+					try {
+						produtoBoundary.entityToBoundary(produto, "visualizar", CodProd);
+						produtoBoundary.start(stage);
+					} catch (Exception error) {
+						error.printStackTrace();
+					}
+				} else {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Visualização de cliente");
+					alert.setHeaderText(null);
+					alert.setContentText("CPF inválido!");
+					alert.showAndWait();
 				}
 			}
 

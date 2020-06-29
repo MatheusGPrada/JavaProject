@@ -1,5 +1,5 @@
 package Boundary;
-import javafx.application.Application;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -22,10 +22,11 @@ public class ProdutoBoundary implements EventHandler<ActionEvent> {
 	    private TextField txtValor = new TextField();
 	    private TextField txtQtd = new TextField();
 	    private TextField txtCodProd = new TextField();
-	    private Boolean editar = false;
+	    private String opcao = "incluir";
+	    private String CodProd = "";
 
 
-		private Button btnIncluir = new Button("Incluir");
+		private Button btnSalvar = new Button("Salvar");
 		private Button btnLimpar = new Button("Limpar");
 
 		private ProdutoControl control = new ProdutoControl();
@@ -46,11 +47,23 @@ public class ProdutoBoundary implements EventHandler<ActionEvent> {
 			Campos.add(new Label("Código do Produto: "), 1, 4);
 			Campos.add(txtCodProd, 2, 4);
 
-			Campos.add(btnIncluir, 1, 5);
-			Campos.add(btnLimpar,  2, 5);
+			if (this.opcao != "visualizar") {
+	        	Campos.add(btnSalvar, 1, 5);
+	        	Campos.add(btnLimpar, 2, 5);
 
-			btnIncluir.setOnAction(this);
-			btnLimpar.setOnAction(this);
+	        	btnSalvar.setOnAction(this);
+	        	btnLimpar.setOnAction(this);
+
+	        	txtNome.setDisable(false);
+	        	txtValor.setDisable(false);
+	        	txtQtd.setDisable(false);
+	        	txtCodProd.setDisable(false);
+	        } else {
+	        	txtNome.setDisable(true);
+	        	txtValor.setDisable(true);
+	        	txtQtd.setDisable(true);
+	        	txtCodProd.setDisable(true);
+	        }
 
 			panPrincipal.setCenter(Campos);
 
@@ -60,12 +73,25 @@ public class ProdutoBoundary implements EventHandler<ActionEvent> {
 		}
 
 		public void handle(ActionEvent event) {
-			if (event.getTarget() == btnIncluir) {
+			if (event.getTarget() == btnSalvar) {
 				Produto produto = boundaryToEntity();
-				if( !this.editar ) {
-					control.adicionar(produto);
+				if( this.opcao == "incluir") {
+					if (control.pesquisarPorCod(produto.getCodProd()) == null ) {
+						control.adicionar(produto);
+						Alert alert = new Alert(AlertType.INFORMATION);
+						alert.setTitle("Inclusão do produto");
+						alert.setHeaderText(null);
+						alert.setContentText("Produto incluído com sucesso!");
+						alert.showAndWait();
+					} else {
+						Alert alert = new Alert(AlertType.INFORMATION);
+						alert.setTitle("Inclusão do produto");
+						alert.setHeaderText(null);
+						alert.setContentText("Código do produto já existe na base de dados!");
+						alert.showAndWait();
+					}
 				} else {
-					control.editar(produto);
+					control.editar(produto,  this.CodProd);
 					Alert alert = new Alert(AlertType.INFORMATION);
 					alert.setTitle("Edição do produto");
 					alert.setHeaderText(null);
@@ -94,16 +120,21 @@ public class ProdutoBoundary implements EventHandler<ActionEvent> {
 			return produto;
 		}
 
-		public void entityToBoundary(Produto produto, Boolean editar) {
+		public void entityToBoundary(Produto produto, String opcao, String CodProd) {
 			txtNome.setText( produto.getNome() );
 	        txtValor.setText( produto.getValor() );
 	        txtQtd.setText(String.valueOf (produto.getQtd()));
 			txtCodProd.setText(String.valueOf (produto.getCodProd()));
-			setEditar(editar);
+			setOpcao(opcao);
+			setCodProd(CodProd);
 		}
 
-		public void setEditar(Boolean editar){
-			this.editar = editar;
+		public void setOpcao(String opcao){
+			this.opcao = opcao;
+		}
+
+		public void setCodProd(String CodProd){
+			this.CodProd = CodProd;
 		}
 
 }
