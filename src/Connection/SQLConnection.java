@@ -53,6 +53,23 @@ public class SQLConnection {
         }
     }
 
+    public static void closeConnection(Connection connection, PreparedStatement statmente) {
+
+    	try {
+            if (connection != null) {
+            	connection.close();
+            }
+
+            if (statmente != null) {
+            	statmente.close();
+            }
+
+
+        } catch (SQLException error) {
+        	alertError("Erro de database", "Erro ao encerrar conexão", error.getMessage());
+        }
+    }
+
 
 
 }

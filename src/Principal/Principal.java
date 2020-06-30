@@ -47,6 +47,7 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 	private Button btnVisualizarFuncionario = new Button("Visualizar");
 	private Button btnExcluirFuncionario = new Button("Excluir");
 
+	private Button btnRealizarVenda = new Button("Realizar Venda");
 
 	private ClienteBoundary clienteBoundary = new ClienteBoundary();
 	private ClienteControl clienteControl = new ClienteControl();
@@ -59,7 +60,7 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 
 	public void start(Stage stage) throws Exception {
 		BorderPane panPrincipal = new BorderPane();
-		Scene scene = new Scene(panPrincipal, 450, 250);
+		Scene scene = new Scene(panPrincipal, 450, 200);
 
 		GridPane Campos = new GridPane();
 
@@ -84,6 +85,8 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 		Campos.add(btnEditarFuncionario,  4, 6);
 		Campos.add(btnVisualizarFuncionario,  5, 6);
 		Campos.add(btnExcluirFuncionario, 6, 6);
+		Campos.add(new Label("                "), 0, 7);
+		Campos.add(btnRealizarVenda, 1, 8);
 
 		btnIncluirCliente.setOnAction(this);
 		btnEditarCliente.setOnAction(this);
@@ -99,6 +102,8 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 		btnEditarProduto.setOnAction(this);
 		btnVisualizarProduto.setOnAction(this);
 		btnExcluirProduto.setOnAction(this);
+
+		btnRealizarVenda.setOnAction(this);
 
 		panPrincipal.setCenter(Campos);
 
@@ -322,7 +327,7 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 				}
 			}
 
-		} else if (event.getTarget() == btnExcluirProduto){
+		} else if (event.getTarget() == btnExcluirProduto) {
 			TextInputDialog dialog = new TextInputDialog("Código Produto");
 			dialog.setTitle("Excluir Produto");
 			dialog.setHeaderText("Insira o código do produto que será excluído");
@@ -345,10 +350,10 @@ public class Principal extends Application implements EventHandler<ActionEvent>{
 					alert.showAndWait();
 				}
 			}
+		} else if (event.getTarget() == btnRealizarVenda) {
+
 		}
 	}
-
-
 
 	public static void main(String[] args) {
 		Application.launch(Principal.class, args);

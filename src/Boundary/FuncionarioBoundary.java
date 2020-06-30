@@ -155,14 +155,12 @@ public class FuncionarioBoundary extends Application implements EventHandler<Act
         setCPF(CPF);
 	}
 
-
-
 	public void setOpcao(String opcao){
 		this.opcao = opcao;
 	}
+
 	public void setCPF(String CPF){
 		this.CPF = CPF;
 	}
-
 
 }
