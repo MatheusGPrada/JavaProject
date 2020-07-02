@@ -56,8 +56,6 @@ public class MenuPrincipal extends Application implements EventHandler<ActionEve
 	private Button btnIncluirLogin = new Button("Incluir");
 	private Button btnExcluirLogin = new Button("Excluir");
 
-	private Button btnRealizarVenda = new Button("Realizar Venda");
-
 	private ClienteBoundary clienteBoundary = new ClienteBoundary();
 	private ClienteControl clienteControl = new ClienteControl();
 	private FuncionarioBoundary funcionarioBoundary = new FuncionarioBoundary();
@@ -71,7 +69,7 @@ public class MenuPrincipal extends Application implements EventHandler<ActionEve
 
 	public void start(Stage stage) throws Exception {
 		BorderPane panPrincipal = new BorderPane();
-		Scene scene = new Scene(panPrincipal, 450, 250);
+		Scene scene = new Scene(panPrincipal, 400, 200);
 
 		GridPane Campos = new GridPane();
 
@@ -101,7 +99,6 @@ public class MenuPrincipal extends Application implements EventHandler<ActionEve
 		Campos.add(btnIncluirLogin, 3, 8);
 		Campos.add(btnExcluirLogin, 4, 8);
 		Campos.add(new Label("                "), 0, 9);
-		Campos.add(btnRealizarVenda, 1, 10);
 
 		btnIncluirCliente.setOnAction(this);
 		btnEditarCliente.setOnAction(this);
@@ -118,7 +115,6 @@ public class MenuPrincipal extends Application implements EventHandler<ActionEve
 		btnVisualizarProduto.setOnAction(this);
 		btnExcluirProduto.setOnAction(this);
 
-		btnRealizarVenda.setOnAction(this);
 		btnIncluirLogin.setOnAction(this);
 		btnExcluirLogin.setOnAction(this);
 
@@ -367,8 +363,6 @@ public class MenuPrincipal extends Application implements EventHandler<ActionEve
 					alert.showAndWait();
 				}
 			}
-		} else if (event.getTarget() == btnRealizarVenda) {
-
 		} else if (event.getTarget() == btnIncluirLogin){
 			try {
 				loginBoundary.start(stage);
